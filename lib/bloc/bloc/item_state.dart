@@ -13,10 +13,13 @@ class TestLoadingState extends ItemState {
 }
 
 class TestSuccessState extends ItemState {
-  final int counterVal;
-  TestSuccessState(this.counterVal);
+  final List asbeza;
+  final List history;
+  TestSuccessState({required this.asbeza, required this.history});
+  
   @override
-  List<Object> get props => [];
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
 }
 
 class TestFailState extends ItemState {

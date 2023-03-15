@@ -1,4 +1,9 @@
+import 'dart:html';
+
+import 'package:asbeza/Presentation/history.dart';
+import 'package:asbeza/bloc/bloc/item_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'Presentation/home_page.dart';
 
@@ -26,7 +31,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: BlocProvider(create: (context) => ItemBloc(),child: const HomePage(),),
     );
   }
 }

@@ -1,112 +1,139 @@
-
+import 'package:asbeza/Presentation/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:ASBEZA/views/components/myDrawer.dart';
 
-class GridDashboard extends StatelessWidget {
-  Items item1 = new Items(
-      title: "Calendar",
-      subtitle: "March, Wednesday",
-      event: "3 Events",
-      img: "asset/calendar.png");
+import 'package:asbeza/bloc/bloc/item_bloc.dart';
+import 'package:asbeza/bloc/bloc/item_state.dart';
+// import 'components/myAppBar.dart';
 
-  Items item2 = new Items(
-    title: "Groceries",
-    subtitle: "Bocali, Apple",
-    event: "4 Items",
-    img: "asset/food.png",
-  );
-  Items item3 = new Items(
-    title: "Locations",
-    subtitle: "Lucy Mao going to Office",
-    event: "",
-    img: "asset/map.png",
-  );
-  Items item4 = new Items(
-    title: "Activity",
-    subtitle: "Rose favirited your Post",
-    event: "",
-    img: "asset/festival.png",
-  );
-  Items item5 = new Items(
-    title: "To do",
-    subtitle: "Homework, Design",
-    event: "4 Items",
-    img: "asset/todo.png",
-  );
-  Items item6 = new Items(
-    title: "Settings",
-    subtitle: "",
-    event: "2 Items",
-    img: "asset/setting.png",
-  );
+
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    List<Items> myList = [item1, item2, item3, item4, item5, item6];
-    var color = 0xff453658;
-    return Flexible(
-      child: GridView.count(
-          childAspectRatio: 1.0,
-          padding: EdgeInsets.only(left: 16, right: 16),
-          crossAxisCount: 2,
-          crossAxisSpacing: 18,
-          mainAxisSpacing: 18,
-          children: myList.map((data) {
-            return Container(
-              decoration: BoxDecoration(
-                  color: Color(color), borderRadius: BorderRadius.circular(10)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    data.img,
-                    width: 42,
-                  ),
-                  SizedBox(
-                    height: 14,
-                  ),
-                  Text(
-                    data.title,
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    data.subtitle,
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    height: 14,
-                  ),
-                  Text(
-                    data.event,
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                ],
-              ),
-            );
-          }).toList()),
-    );
-  }
+  State<HistoryPage> createState() => _HistoryPageState();
 }
 
-class Items {
-  String title;
-  String subtitle;
-  String event;
-  String img;
-  Items({required this.title,required this.subtitle,required this.event,required this.img});
+class _HistoryPageState extends State<HistoryPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text('Shop'),centerTitle: true,),
+          
+      body: BlocBuilder<ItemBloc, ItemState>(
+        builder: (context, state) {
+          if (state is TestInitialState) {
+            return const Center(
+                child: Text(
+              "NO HISTORY TO SHOW!\n TOTAL: 0\$",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+              ),
+            ));
+          }
+          if (state is TestLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is TestSuccessState) {
+            if (state.history.isEmpty) {
+              return const Center(
+                  child: Text(
+                "NO HISTORY TO SHOW!\n TOTAL: 0\$",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                ),
+              ));
+            } else {
+              // ignore: non_constant_identifier_names
+              num TotalPrice = 0;
+              // ignore: no_leading_underscores_for_local_identifiers
+              void _incrementCounter() {
+                for (var element in state.history) {
+                  TotalPrice += element.price;
+                }
+              }
+
+              _incrementCounter();
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "TOTAL: ${TotalPrice.toStringAsFixed(2)}\$",
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 5),
+                    height: MediaQuery.of(context).size.height * .84,
+                    child: ListView.builder(
+                      itemCount: state.history.length,
+                      itemBuilder: (context, index) {
+                        final asbezaVal = state.history[index];
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              fit: BoxFit.contain,
+                                              image: NetworkImage(
+                                                  asbezaVal.image))),
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .1,
+                                      width: MediaQuery.of(context).size.width *
+                                          .3,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 11, vertical: 5),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          .4,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(asbezaVal.name),
+                                          Text(
+                                            "${asbezaVal.price}\$",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w900),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            )
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+          }
+          return Container();
+        },
+      ),
+    );
+  }
 }

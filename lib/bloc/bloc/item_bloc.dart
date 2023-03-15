@@ -1,14 +1,23 @@
 import 'package:bloc/bloc.dart';
-import 'package:init/bloc/test_event.dart';
-import 'package:init/bloc/test_state.dart';
+import 'package:asbeza/bloc/bloc/item_event.dart';
+import 'package:asbeza/bloc/bloc/item_state.dart';
 
-class ItemBloc extends Bloc<TestEvent, TestState> {
-  int counter = 0;
-  ItemBloc() : super(TestSuccessState(0)) {
-    on<GetDataButtonPressed>((event, emit) async {
+import '../../data/model/repository.dart';
+
+class ItemBloc extends Bloc<ItemEvent, ItemState> {
+final _apiServiceProvider = ApiServiceProvider();
+  List history = [];
+  ItemBloc() : super(TestInitialState()) {
+    on<AsbezaFetchEvent>((event, emit) async {
       emit(TestLoadingState());
-      counter++;
-      emit(TestSuccessState(counter));
+      try {
+        final activity = await _apiServiceProvider.fetchActivity();
+        emit(TestSuccessState(asbeza: activity!, history: history));
+      } catch (e) {
+        emit(TestInitialState());
+      }
     });
+
+    on<HistoryEvent>((event, emit) => {history.add(event.data)});
   }
 }

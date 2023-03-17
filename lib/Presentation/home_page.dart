@@ -109,9 +109,10 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.black,
         child: Icon(Icons.shopping_cart),
         onPressed: () {
-        BlocProvider(create: (context) => ItemBloc(),child: const HistoryPage(),);
+        Navigator.push(context, MaterialPageRoute(builder: ((context) => BlocProvider.value(value:BlocProvider.of<ItemBloc>(context),child: const HistoryPage(),))));
       },
       ),
     );

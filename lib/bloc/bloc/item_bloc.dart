@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:asbeza/bloc/bloc/item_event.dart';
 import 'package:asbeza/bloc/bloc/item_state.dart';
 
-import '../../data/model/repository.dart';
+import '../../data/model/api.dart';
 
 class ItemBloc extends Bloc<ItemEvent, ItemState> {
 final _apiServiceProvider = ApiServiceProvider();

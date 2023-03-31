@@ -25,4 +25,12 @@ class Item {
     }
     return asbezas;
   }
+ toJson() {
+    Map<String, dynamic> json = {};
+    json['name'] = name;
+    json['Description'] = Description;
+    json['image'] = image;
+    json['price'] = price;
+    return json;
+  }
 }
